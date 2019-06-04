@@ -1,0 +1,11 @@
+# Ignoramos tudo que não tem extensão ou que não é pasta
+*
+!*/
+!*.*
+# exceto
+!Makefile
+!.*
+
+# Ignoramos arquivos objeto, PDFs
+*.o
+*.pdf
