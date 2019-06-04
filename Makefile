@@ -18,7 +18,13 @@ TEST_SCRIPT = test.sh
 VERBOSE ?= 1
 
 
-all: $(OUTPUT)/single_thread
+all: $(OUTPUT)/single_thread $(OUTPUT)/multi_thread $(OUTPUT)/multi_processos
+
+$(OUTPUT)/multi_processos: $(OUTPUT)/processamento.o $(OUTPUT)/imagem.o $(OUTPUT)/main.o $(SOURCES)/multi_processos.c
+	$(CC) -o $(OUTPUT)/multi_processos $(FLAGS) $(OUTPUT)/processamento.o $(OUTPUT)/imagem.o $(OUTPUT)/main.o $(SOURCES)/multi_processos.c
+
+$(OUTPUT)/multi_thread: $(OUTPUT)/processamento.o $(OUTPUT)/imagem.o $(OUTPUT)/main.o $(SOURCES)/multi_thread.c
+	$(CC) -o $(OUTPUT)/multi_thread $(FLAGS) $(OUTPUT)/processamento.o $(OUTPUT)/imagem.o $(OUTPUT)/main.o $(SOURCES)/multi_thread.c
 
 $(OUTPUT)/single_thread: $(OUTPUT)/processamento.o $(OUTPUT)/imagem.o $(OUTPUT)/main.o $(SOURCES)/single_thread.c
 	$(CC) -o $(OUTPUT)/single_thread $(FLAGS) $(OUTPUT)/processamento.o $(OUTPUT)/imagem.o $(OUTPUT)/main.o $(SOURCES)/single_thread.c
