@@ -1,6 +1,12 @@
-MAIN = main
+##
+# Rafael Sartori M. Santos, 186154
+# Letícia Mayumi Araújo Tateishi, 201454
+#
+# Trabalho 2 de EA876 1s2019 na Unicamp
+##
+
 CC = gcc
-FLAGS = -Wall
+FLAGS = -Wall -lpthread -lfreeimage
 
 # Pastas
 SOURCES = ./src
@@ -12,14 +18,19 @@ TEST_SCRIPT = test.sh
 VERBOSE ?= 1
 
 
-all: $(OUTPUT)/lex.yy.c $(OUTPUT)/y.tab.c
-	$(CC) -o $(OUTPUT)/$(MAIN) $(FLAGS) $(OUTPUT)/lex.yy.c $(OUTPUT)/y.tab.c
+all: $(OUTPUT)/single_thread
 
-$(OUTPUT)/lex.yy.c: $(SOURCES)/calculadora.l
-	flex -o $(OUTPUT)/lex.yy.c $(SOURCES)/calculadora.l
+$(OUTPUT)/single_thread: $(OUTPUT)/processamento.o $(OUTPUT)/imagem.o $(OUTPUT)/main.o $(SOURCES)/single_thread.c
+	$(CC) -o $(OUTPUT)/single_thread $(FLAGS) $(OUTPUT)/processamento.o $(OUTPUT)/imagem.o $(OUTPUT)/main.o $(SOURCES)/single_thread.c
 
-$(OUTPUT)/y.tab.c: $(SOURCES)/calculadora.y
-	bison -dy $(SOURCES)/calculadora.y -o $(OUTPUT)/y.tab.c
+$(OUTPUT)/processamento.o: $(SOURCES)/processamento.c $(SOURCES)/processamento.h
+	$(CC) -o $(OUTPUT)/processamento.o $(FLAGS) -c $(SOURCES)/processamento.c
+
+$(OUTPUT)/imagem.o: $(SOURCES)/imagem.c $(SOURCES)/imagem.h
+	$(CC) -o $(OUTPUT)/imagem.o $(FLAGS) -c $(SOURCES)/imagem.c
+
+$(OUTPUT)/main.o: $(SOURCES)/main.c
+	$(CC) -o $(OUTPUT)/main.o $(FLAGS) -c $(SOURCES)/main.c
 
 test: all
 	$(BASH) $(TEST_SCRIPT) $(OUTPUT)/main $(VERBOSE)

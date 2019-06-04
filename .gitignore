@@ -5,6 +5,10 @@
 # exceto
 !Makefile
 
-# Ignoramos arquivos objeto, PDFs
+# Ignoramos arquivos objeto, PDFs, imagens de output
 *.o
 *.pdf
+*_out.jpg
+
+# Pastas de configurações
+.*/
