@@ -16,6 +16,10 @@ typedef struct imagem_t {
     float *b;
 } imagem_t;
 
+/**
+ * Aloca memória suficiente para armazenar a imagem.
+ */
+float *alocar(unsigned int altura, unsigned int largura);
 
 /**
  * Retorna uma instância com todas as informações da imagem com as cores

@@ -11,6 +11,20 @@
 #include "imagem.h"
 
 
+float *alocar(unsigned int altura, unsigned int largura) {
+    /* Alocamos memória suficiente para a imagem */
+    float *memoria = malloc(altura * largura * sizeof(float));
+
+    /* Conferimos se foi bem sucedida a alocação */
+    if (memoria == NULL) {
+        fprintf(stderr, "Falha ao alocar memória para a imagem.\n");
+        exit(1);
+    }
+
+    return memoria;
+}
+
+
 imagem_t abrir_imagem(
     char *caminho_arquivo,
     float *(*alocar)(unsigned int largura, unsigned int altura)

@@ -13,20 +13,6 @@
 #include "metodo.h"
 
 
-float *alocar(unsigned int altura, unsigned int largura) {
-    /* Alocamos memória suficiente para a imagem */
-    float *memoria = malloc(altura * largura * sizeof(float));
-
-    /* Conferimos se foi bem sucedida a alocação */
-    if (memoria == NULL) {
-        fprintf(stderr, "Falha ao alocar memória para a imagem.\n");
-        exit(1);
-    }
-
-    return memoria;
-}
-
-
 void processar_imagem(char *imagem_entrada, char *imagem_saida) {
     /* Abrimos a imagem */
     imagem_t imagem = abrir_imagem(imagem_entrada, alocar);
