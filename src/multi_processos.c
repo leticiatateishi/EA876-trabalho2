@@ -22,7 +22,7 @@
 void *_mmap(int _sizeof) {
     /* Definir flags de protecao e visibilidade de memoria */
     int protection = PROT_READ | PROT_WRITE;
-    int visibility = MAP_SHARED;
+    int visibility = MAP_SHARED | MAP_ANON;
 
     /* Tentamos alocar memória de maneira segura */
     void *memoria = (float*) mmap(
