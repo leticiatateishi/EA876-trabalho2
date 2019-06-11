@@ -70,10 +70,6 @@ void salvar_imagem(char *caminho_arquivo, imagem_t *imagem) {
             unsigned int posicao = (linha * imagem->largura) + coluna;
 
             RGBQUAD cor;
-            // TODO: remover debugging
-            if (coluna == 32 && linha == 0) {
-                printf("imagem->r = %f\n", imagem->r[posicao]);
-            }
             cor.rgbRed = imagem->r[posicao];
             cor.rgbGreen = imagem->g[posicao];
             cor.rgbBlue = imagem->b[posicao];

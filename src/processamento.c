@@ -37,11 +37,11 @@ void processar_pixels(
         numero_pixels--;
         coluna++;
         /* Conferimos se saímos da imagem */
-        if (coluna > batch->largura) {
+        if (coluna >= batch->largura) {
             coluna = 0;
             linha++;
         }
-        if (linha > batch->altura && numero_pixels > 0) {
+        if (linha >= batch->altura && numero_pixels > 0) {
             fprintf(
                 stderr, "Falha de cálculo: imagem terminou antes do batch.\n"
             );
