@@ -19,6 +19,8 @@
 /** Número de threads consumidoras */
 #define N_CONSUMIDORES 3
 
+#define TAM_BATCH 5000
+
 
 /**
  * Função que escreve nas variáveis globais a próxima estrutura a ser processada
@@ -162,7 +164,7 @@ void *produtor(void *arg) {
     /* Trabalho que começará do pixel (0, 0) e terá o tamanho da imagem */
     batch.coluna = 0;
     batch.linha = 0;
-    batch.numero_pixels = imagem->largura;
+    batch.numero_pixels = TAM_BATCH;
     batch.altura = imagem->altura;
     batch.largura = imagem->largura;
 
@@ -182,24 +184,6 @@ void *produtor(void *arg) {
         /* Verificamos se terminamos a imagem */
         if (batch.linha >= imagem->altura) {
             break;
-        }
-
-        /* Conferimos os cálculos */
-        if (batch.linha < 0 || batch.linha >= imagem->altura) {
-            fprintf(
-                stderr,
-                "Falha de cálculo: posição fora de imagem: linha %d de %d\n",
-                batch.linha,
-                imagem->altura
-            );
-        }
-        if (batch.coluna >= imagem->largura) {
-            fprintf(
-                stderr,
-                "Falha de cálculo: posição fora de imagem: coluna %d de %d\n",
-                batch.coluna,
-                imagem->largura
-            );
         }
     }
 

@@ -42,9 +42,6 @@ void processar_pixels(
             linha++;
         }
         if (linha >= batch->altura && numero_pixels > 0) {
-            fprintf(
-                stderr, "Falha de cálculo: imagem terminou antes do batch.\n"
-            );
             break;
         }
     }
