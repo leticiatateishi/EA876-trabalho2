@@ -19,13 +19,13 @@
 
 
 float *alocar(unsigned int altura, unsigned int largura) {
-    
-	/* Definir flags de protecao e visibilidade de memoria */
-	int protection = PROT_READ | PROT_WRITE;
-	int visibility = MAP_SHARED | MAP_ANON;
+    /* Definir flags de protecao e visibilidade de memoria */
+    int protection = PROT_READ | PROT_WRITE;
+    int visibility = MAP_SHARED | MAP_ANON;
 
-	float *memoria;
-  	memoria = (float*) mmap(NULL, sizeof(float)*altura*largura, protection, visibility, 0, 0);
+    float *memoria = (float*) mmap(
+        NULL, sizeof(float)*altura*largura, protection, visibility, 0, 0
+    );
 
     return memoria;
 }
@@ -43,52 +43,56 @@ void processar_imagem(char *imagem_entrada, char *imagem_saida) {
     int *n_linha = alocar(1, 1);
 
     pid_t pid[N_PROCESSOS];
-    for (int i = 0; i < N_PROCESSOS; i++){
-    	pid[i] = fork();
-    	if (pid[i] == 0){
+    for (int i = 0; i < N_PROCESSOS; i++) {
+        pid[i] = fork();
+        if (pid[i] == 0){
 
-    		batch_t batch;
-    		batch.coluna = (*n_coluna);
-		    batch.linha = (*n_linha);
-		    batch.numero_pixels = TAM_BATCH;
-		    batch.altura = imagem.altura;
-		    batch.largura = imagem.largura;
+            batch_t batch;
+            batch.coluna = (*n_coluna);
+            batch.linha = (*n_linha);
+            batch.numero_pixels = TAM_BATCH;
+            batch.altura = imagem.altura;
+            batch.largura = imagem.largura;
 
-		    if ((batch.coluna+TAM_BATCH) > imagem.largura){
+            if ((batch.coluna + TAM_BATCH) > imagem.largura) {
 
-	    		/* Consideramos a possibilidade do ultimo batch ser menor do que os outros,
-	    		 * caso o número de pixels não seja múltiplo de TAM_BATCH */
-	    		if (batch.linha == imagem.altura)
-	    			batch.numero_pixels = imagem.largura - (batch.coluna - TAM_BATCH);
-	    	}
+                /* Consideramos a possibilidade do ultimo batch ser menor do
+                 * que os outros, caso o número de pixels não seja múltiplo de
+                 * TAM_BATCH */
+                if (batch.linha == imagem.altura) {
+                    batch.numero_pixels =
+                        imagem.largura - (batch.coluna - TAM_BATCH);
+                }
+            }
 
-		    /* Fazemos para a cor vermelha */
-		    batch.matriz = imagem.r;
-		    processar_pixels(red, &batch, aplicar_branco);
+            /* Fazemos para a cor vermelha */
+            batch.matriz = imagem.r;
+            processar_pixels(red, &batch, aplicar_branco);
 
-		    /* Fazemos para a cor verde */
-		    batch.matriz = imagem.g;
-		    processar_pixels(green, &batch, aplicar_branco);
+            /* Fazemos para a cor verde */
+            batch.matriz = imagem.g;
+            processar_pixels(green, &batch, aplicar_branco);
 
-		    /* Fazemos para a cor azul */
-		    batch.matriz = imagem.b;
-		    processar_pixels(blue, &batch, aplicar_branco);
+            /* Fazemos para a cor azul */
+            batch.matriz = imagem.b;
+            processar_pixels(blue, &batch, aplicar_branco);
 
-		    
-	    	(*n_coluna) += TAM_BATCH;
-	        if ((*n_coluna) > imagem.largura){
-	            (*n_coluna) %= imagem.largura;
-	            (*n_linha) += 1;
-	        }
 
-    		exit(0);
-    	}
+            (*n_coluna) += TAM_BATCH;
+            if ((*n_coluna) > imagem.largura) {
+                (*n_coluna) %= imagem.largura;
+                (*n_linha) += 1;
+            }
+
+            exit(0);
+        }
     }
 
- 	for (int i = 0; i < N_PROCESSOS; i++)
-    	waitpid(pid[i], NULL, 0);
+     for (int i = 0; i < N_PROCESSOS; i++) {
+        waitpid(pid[i], NULL, 0);
+     }
 
-     	/* Passamos as matrizes red, green e blue para a imagem */
+    /* Passamos as matrizes red, green e blue para a imagem */
     // free(imagem.r);
     imagem.r = red;
     // free(imagem.g);

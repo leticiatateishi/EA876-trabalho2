@@ -119,5 +119,5 @@ float aplicar_branco(
     unsigned int altura, unsigned int largura,
     unsigned int linha, unsigned int coluna
 ) {
-    return 255;
+    return 255.0;
 }

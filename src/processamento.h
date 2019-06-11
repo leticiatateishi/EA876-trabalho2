@@ -51,6 +51,7 @@ float aplicar_blur(
     unsigned int linha, unsigned int coluna
 );
 
+
 /**
  * Retorna o valor original do pixel recebido.
  */
@@ -60,6 +61,10 @@ float aplicar_nada(
     unsigned int linha, unsigned int coluna
 );
 
+
+/**
+ * Retorna o valor branco para cada pixel recebido.
+ */
 float aplicar_branco(
     float *matriz,
     unsigned int altura, unsigned int largura,

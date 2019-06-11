@@ -38,56 +38,60 @@ float *alocar(unsigned int altura, unsigned int largura) {
     return memoria;
 }
 
-void escrever(batch_t batch){
-	pthread_mutex_lock(&tem_espaco);
-	pthread_mutex_lock(&trava);
+void escrever(batch_t batch) {
+    pthread_mutex_lock(&tem_espaco);
+    pthread_mutex_lock(&trava);
 
-	if (n_escrita >= TAM_FILA)
-		n_escrita -= TAM_FILA;
+    if (n_escrita >= TAM_FILA) {
+        n_escrita -= TAM_FILA;
+    }
 
-	/* Inserimos um batch em um vetor circular */
-	fila[n_escrita] = batch;
-	n_escrita ++;
-	n_fila ++;
+    /* Inserimos um batch em um vetor circular */
+    fila[n_escrita] = batch;
+    n_escrita ++;
+    n_fila ++;
 
-	pthread_mutex_unlock(&tem_dados);
+    pthread_mutex_unlock(&tem_dados);
 
-	if (n_fila < TAM_FILA) 
-		pthread_mutex_unlock(&tem_espaco);
+    if (n_fila < TAM_FILA) {
+        pthread_mutex_unlock(&tem_espaco);
+    }
 
-	pthread_mutex_unlock(&trava);
+    pthread_mutex_unlock(&trava);
 }
 
 batch_t ler() {
-	batch_t batch;
+    batch_t batch;
 
-	pthread_mutex_lock(&tem_dados);
-	pthread_mutex_lock(&trava);
+    pthread_mutex_lock(&tem_dados);
+    pthread_mutex_lock(&trava);
 
-	/* Lemos um batch do vetor circular */
-	batch = fila[n_leitura];
-	n_leitura++;
-	n_fila--;
-	if (n_leitura >= TAM_FILA)
-		n_leitura -= TAM_FILA;
+    /* Lemos um batch do vetor circular */
+    batch = fila[n_leitura];
+    n_leitura++;
+    n_fila--;
+    if (n_leitura >= TAM_FILA) {
+        n_leitura -= TAM_FILA;
+    }
 
-	pthread_mutex_unlock(&tem_espaco);
+    pthread_mutex_unlock(&tem_espaco);
 
-	if (n_fila > 0) 
-		pthread_mutex_unlock(&tem_dados);
+    if (n_fila > 0) {
+        pthread_mutex_unlock(&tem_dados);
+    }
 
-	pthread_mutex_unlock(&trava);
+    pthread_mutex_unlock(&trava);
 
-	return batch;
+    return batch;
 }
 
-/*	O produtor separa a imagem em batchs de mesmo tamanho (exceto possivelmente o 
- *	último) e os insere no vetor circular com a função escrever */
-void *produtor(void *arg){
+/* O produtor separa a imagem em batchs de mesmo tamanho (exceto possivelmente
+ * o último) e os insere no vetor circular com a função escrever */
+void *produtor(void *arg) {
 
-	imagem_t *imagem = (imagem_t*) arg;
+    imagem_t *imagem = (imagem_t*) arg;
 
-	batch_t batch;
+    batch_t batch;
     /* Trabalho que começará do pixel (0, 0) e terá o tamanho da imagem */
     batch.coluna = 0;
     batch.linha = 0;
@@ -95,19 +99,21 @@ void *produtor(void *arg){
     batch.altura = imagem->altura;
     batch.largura = imagem->largura;
 
-    while(batch.linha <= imagem->altura){
+    while(batch.linha <= imagem->altura) {
 
-    	if ((batch.coluna+TAM_BATCH) > imagem->largura){
+        if ((batch.coluna + TAM_BATCH) > imagem->largura) {
 
-    		/* Consideramos a possibilidade do ultimo batch ser menor do que os outros,
-    		 * caso o número de pixels não seja múltiplo de TAM_BATCH */
-    		if (batch.linha == imagem->altura)
-    			batch.numero_pixels = imagem->largura - (batch.coluna - TAM_BATCH);
-    	}
+            /* Consideramos a possibilidade do ultimo batch ser menor do que os
+             * outros, caso o número de pixels não seja múltiplo de TAM_BATCH */
+            if (batch.linha == imagem->altura) {
+                batch.numero_pixels =
+                    imagem->largura - (batch.coluna - TAM_BATCH);
+            }
+        }
 
-    	escrever(batch);
-    	batch.coluna += TAM_BATCH;
-        if (batch.coluna > imagem->largura){
+        escrever(batch);
+        batch.coluna += TAM_BATCH;
+        if (batch.coluna > imagem->largura) {
             batch.coluna %= imagem->largura;
             batch.linha += 1;
         }
@@ -117,12 +123,12 @@ void *produtor(void *arg){
 }
 
 /*	O consumidor lê um batch do vetor circular e o processa */
-void *consumidor(void *arg){
+void *consumidor(void *arg) {
 
-	imagem_t *imagem = (imagem_t*) arg;
-	batch_t batch = ler();
+    imagem_t *imagem = (imagem_t*) arg;
+    batch_t batch = ler();
 
-	/* Fazemos para a cor vermelha */
+    /* Fazemos para a cor vermelha */
     batch.matriz = imagem->r;
     processar_pixels(red, &batch, aplicar_branco);
 
@@ -149,18 +155,20 @@ void processar_imagem(char *imagem_entrada, char *imagem_saida) {
     pthread_t prod;
     pthread_t cons[N_CONSUMIDORES];
 
-	pthread_create(&prod, NULL, produtor, (void*) &imagem);
-	for (int i = 0; i < N_CONSUMIDORES; i++)
-		pthread_create(&(cons[i]), NULL, consumidor, (void*) &imagem);
+    pthread_create(&prod, NULL, produtor, (void*) &imagem);
+    for (int i = 0; i < N_CONSUMIDORES; i++) {
+        pthread_create(&(cons[i]), NULL, consumidor, (void*) &imagem);
+    }
 
-	for (int i = 0; i < N_CONSUMIDORES; i++) 
- 	   pthread_join(cons[i], NULL);
+    for (int i = 0; i < N_CONSUMIDORES; i++) {
+        pthread_join(cons[i], NULL);
+    }
 
- 	// for (int i = 312; i < 315; i++) {
-		// printf("i = %d, imagem.r = %f, red = %f\n", i, imagem.r[i], red[i]); 		
- 	// }
+    // for (int i = 312; i < 315; i++) {
+    //     printf("i = %d, imagem.r = %f, red = %f\n", i, imagem.r[i], red[i]);
+    // }
 
- 	/* Passamos as matrizes red, green e blue para a imagem */
+     /* Passamos as matrizes red, green e blue para a imagem */
     free(imagem.r);
     imagem.r = red;
     free(imagem.g);
@@ -168,9 +176,9 @@ void processar_imagem(char *imagem_entrada, char *imagem_saida) {
     free(imagem.b);
     imagem.b = blue;
 
-	// for (int i = 312; i < 315; i++) {
-	// 	printf("i = %d, imagem.r = %f, red = %f\n", i, imagem.r[i], red[i]); 		
- // 	}
+    // for (int i = 312; i < 315; i++) {
+    //     printf("i = %d, imagem.r = %f, red = %f\n", i, imagem.r[i], red[i]);
+    // }
 
     /* Salvamos a imagem */
     salvar_imagem(imagem_saida, &imagem);
