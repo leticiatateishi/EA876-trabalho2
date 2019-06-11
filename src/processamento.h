@@ -60,5 +60,10 @@ float aplicar_nada(
     unsigned int linha, unsigned int coluna
 );
 
+float aplicar_branco(
+    float *matriz,
+    unsigned int altura, unsigned int largura,
+    unsigned int linha, unsigned int coluna
+);
 
 #endif /* PROCESSAMENTO_H */

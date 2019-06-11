@@ -112,3 +112,12 @@ float aplicar_nada(
 ) {
     return matriz[(linha * largura) + coluna];
 }
+
+
+float aplicar_branco(
+    float *matriz,
+    unsigned int altura, unsigned int largura,
+    unsigned int linha, unsigned int coluna
+) {
+    return 255;
+}

@@ -23,7 +23,12 @@ void processar_imagem(char *imagem_entrada, char *imagem_saida) {
     /* Abrimos a imagem */
     imagem_t imagem = abrir_imagem(imagem_entrada, alocar);
 
-    // TODO
+    
+	// /* Definir flags de protecao e visibilidade de memoria */
+	// int protection = PROT_READ | PROT_WRITE;
+	// int visibility = MAP_SHARED | MAP_ANON;
+
+	// int **memoria = (int**) mmap(NULL, sizeof(int*), protection, visibility, 0, 0);
 
     /* Salvamos a imagem */
     salvar_imagem(imagem_saida, &imagem);

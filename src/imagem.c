@@ -6,23 +6,12 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <FreeImage.h>
 
 #include "imagem.h"
 
 
-float *alocar(unsigned int altura, unsigned int largura) {
-    /* Alocamos memória suficiente para a imagem */
-    float *memoria = malloc(altura * largura * sizeof(float));
-
-    /* Conferimos se foi bem sucedida a alocação */
-    if (memoria == NULL) {
-        fprintf(stderr, "Falha ao alocar memória para a imagem.\n");
-        exit(1);
-    }
-
-    return memoria;
-}
 
 
 imagem_t abrir_imagem(
@@ -83,6 +72,9 @@ void salvar_imagem(char *caminho_arquivo, imagem_t *imagem) {
             unsigned int posicao = (linha * imagem->largura) + coluna;
 
             RGBQUAD cor;
+            if (coluna == 32 && linha == 0) {
+                printf("imagem->r = %f\n", imagem->r[posicao]);        
+            }
             cor.rgbRed = imagem->r[posicao];
             cor.rgbGreen = imagem->g[posicao];
             cor.rgbBlue = imagem->b[posicao];
