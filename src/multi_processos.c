@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/mman.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include "imagem.h"
@@ -18,16 +19,29 @@
 #define TAM_BATCH 3000
 
 
-float *alocar(unsigned int altura, unsigned int largura) {
+void *_mmap(int _sizeof) {
     /* Definir flags de protecao e visibilidade de memoria */
     int protection = PROT_READ | PROT_WRITE;
-    int visibility = MAP_SHARED | MAP_ANON;
+    int visibility = MAP_SHARED;
 
-    float *memoria = (float*) mmap(
-        NULL, sizeof(float)*altura*largura, protection, visibility, 0, 0
+    /* Tentamos alocar memória de maneira segura */
+    void *memoria = (float*) mmap(
+        NULL, _sizeof, protection, visibility, 0, 0
     );
+    /* Conferimos se houve sucesso */
+    if (memoria == MAP_FAILED) {
+        fprintf(stderr, "Falha ao alocar memória compartilhada.\n");
+        exit(1);
+    }
 
+    /* Retornamos a memória alocada */
     return memoria;
+}
+
+
+float *alocar(unsigned int altura, unsigned int largura) {
+    /* Utilizamos nosso método genérico e seguro */
+    return (float *) _mmap(sizeof(float) * altura * largura);
 }
 
 
@@ -39,8 +53,8 @@ void processar_imagem(char *imagem_entrada, char *imagem_saida) {
     float *green = alocar(imagem.altura, imagem.largura);
     float *blue = alocar(imagem.altura, imagem.largura);
 
-    int *n_coluna = alocar(1, 1);
-    int *n_linha = alocar(1, 1);
+    int *n_coluna = (int *) _mmap(sizeof(int));
+    int *n_linha = (int *) _mmap(sizeof(int));
 
     pid_t pid[N_PROCESSOS];
     for (int i = 0; i < N_PROCESSOS; i++) {
