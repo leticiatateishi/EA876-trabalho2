@@ -95,25 +95,22 @@ void *produtor(void *arg){
     batch.altura = imagem->altura;
     batch.largura = imagem->largura;
 
-    while((batch.linha < imagem->altura) || (batch.coluna < imagem->largura)){
+    while(batch.linha <= imagem->altura){
 
-    	if (batch.coluna > imagem->largura){
+    	if ((batch.coluna+TAM_BATCH) > imagem->largura){
 
     		/* Consideramos a possibilidade do ultimo batch ser menor do que os outros,
     		 * caso o número de pixels não seja múltiplo de TAM_BATCH */
-    		if (batch.linha == imagem->altura){
+    		if (batch.linha == imagem->altura)
     			batch.numero_pixels = imagem->largura - (batch.coluna - TAM_BATCH);
-    			batch.coluna = imagem->largura;
-    		}
-    		/* Lidamos com o fim da linha */
-    		else{    			
-	    		batch.coluna %= imagem->largura;
-	    		batch.linha += 1;
-    		}
     	}
 
     	escrever(batch);
     	batch.coluna += TAM_BATCH;
+        if (batch.coluna > imagem->largura){
+            batch.coluna %= imagem->largura;
+            batch.linha += 1;
+        }
     }
 
     return NULL;

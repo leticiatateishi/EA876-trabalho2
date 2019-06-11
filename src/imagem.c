@@ -11,9 +11,6 @@
 
 #include "imagem.h"
 
-
-
-
 imagem_t abrir_imagem(
     char *caminho_arquivo,
     float *(*alocar)(unsigned int largura, unsigned int altura)
